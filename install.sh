@@ -26,7 +26,7 @@ ROOT=`pwd`
 #clone repo
 $GIT clone https://github.com/Knewton/bash_magic.git bash/bash_magic
 
-#install
+#install select bash magic scripts
 cd "bash/bash_magic"
 mkdir "${HOME}/.bash_aliases.d" "${HOME}/.bash_completion.d" "${HOME}/.bash_functions.d"
 cd "bash_aliases.d"
@@ -36,6 +36,12 @@ ln -s etc.sh "${HOME}/.bash_completion.d"
 cd "../bash_functions.d"
 ln -s completion.sh extract.sh lsbytes.sh lsnew.sh vim.sh "${HOME}/.bash_functions.d"
 cd "${ROOT}"
+#install custom bash scripts
+ln -s "bash/bash_aliases.d/*.sh" "${HOME}/.bash_aliases.d"
+ln -s "bash/bash_completion.d/*.sh" "${HOME}/.bash_completion.d"
+ln -s "bash/bash_functions.d/*.sh" "${HOME}/.bash_functions.d"
+#set up the bashrc file
+cat "bash/bash_magic/bashrc" >> ${HOME}/.bashrc
 
 ###
 # vim
