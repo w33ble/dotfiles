@@ -28,20 +28,24 @@ $GIT clone https://github.com/Knewton/bash_magic.git bash/bash_magic
 
 #install select bash magic scripts
 cd "bash/bash_magic"
-mkdir "${HOME}/.bash_aliases.d" "${HOME}/.bash_completion.d" "${HOME}/.bash_functions.d"
+mkdir "${HOME}/bin" "${HOME}/.bash_aliases.d" "${HOME}/.bash_completion.d" "${HOME}/.bash_functions.d"
 cd "bash_aliases.d"
-ln -s color.sh refresh.sh "${HOME}/.bash_aliases.d"
+cp color.sh refresh.sh "${HOME}/.bash_aliases.d"
 cd "../bash_completion.d"
-ln -s etc.sh "${HOME}/.bash_completion.d"
+cp etc.sh "${HOME}/.bash_completion.d"
 cd "../bash_functions.d"
-ln -s completion.sh extract.sh lsbytes.sh lsnew.sh vim.sh "${HOME}/.bash_functions.d"
+cp completion.sh extract.sh lsbytes.sh lsnew.sh vim.sh "${HOME}/.bash_functions.d"
 cd "${ROOT}"
 #install custom bash scripts
-ln -s "bash/bash_aliases.d/*.sh" "${HOME}/.bash_aliases.d"
-ln -s "bash/bash_completion.d/*.sh" "${HOME}/.bash_completion.d"
-ln -s "bash/bash_functions.d/*.sh" "${HOME}/.bash_functions.d"
+cp "bash/bash_aliases.d/"*.sh "${HOME}/.bash_aliases.d"
+#cp "bash/bash_completion.d/"*.sh "${HOME}/.bash_completion.d"
+#cp "bash/bash_functions.d/"*.sh "${HOME}/.bash_functions.d"
 #set up the bashrc file
-cat "bash/bash_magic/bashrc" >> ${HOME}/.bashrc
+cp bash/bashrc "${HOME}"/.bashrc
+cat "bash/bash_magic/bashrc" >> "${HOME}"/.bashrc
+if [ ! -f "${HOME}"/.bash_profile ]; then
+	ln -s "${HOME}"/.bashrc "${HOME}"/.bash_profile
+fi
 
 ###
 # vim
@@ -54,6 +58,7 @@ done
 cd "${ROOT}"
 
 #install
+cp -R vim "${HOME}"/.vim
+ln -s "${HOME}"/.vim/vimrc "${HOME}"/.vimrc
 
-
-echo "not finished, check back later"
+echo Install complete, run the following: source \"${HOME}\"/.bashrc
