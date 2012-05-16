@@ -40,12 +40,12 @@ cd "${ROOT}"
 cp "bash/bash_aliases.d/"*.sh "${HOME}/.bash_aliases.d"
 #cp "bash/bash_completion.d/"*.sh "${HOME}/.bash_completion.d"
 #cp "bash/bash_functions.d/"*.sh "${HOME}/.bash_functions.d"
-#set up the bashrc file
-cp bash/bashrc "${HOME}"/.bashrc
-cat "bash/bash_magic/bashrc" >> "${HOME}"/.bashrc
-if [ ! -f "${HOME}"/.bash_profile ]; then
-	ln -s "${HOME}"/.bashrc "${HOME}"/.bash_profile
-fi
+#set up the bash_profile file
+cp bash/bash_profile "${HOME}"/.bash_profile
+cat "bash/bash_magic/bashrc" >> "${HOME}"/.bash_profile
+if [ ! -f "${HOME}"/.bashrc ]; then
+	ln -s "${HOME}"/.bash_profile "${HOME}"/.bashrc
+if
 
 ###
 # vim
