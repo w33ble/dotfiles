@@ -45,7 +45,7 @@ cp bash/bash_profile "${HOME}"/.bash_profile
 cat "bash/bash_magic/bashrc" >> "${HOME}"/.bash_profile
 if [ ! -f "${HOME}"/.bashrc ]; then
 	ln -s "${HOME}"/.bash_profile "${HOME}"/.bashrc
-if
+fi
 
 ###
 # vim
