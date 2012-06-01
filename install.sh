@@ -21,7 +21,7 @@ fi
 ROOT=`pwd`
 
 ###
-# bash_magic
+# bash
 ###
 #clone repo
 $GIT clone https://github.com/Knewton/bash_magic.git bash/bash_magic
@@ -46,6 +46,17 @@ cat "bash/bash_magic/bashrc" >> "${HOME}"/.bash_profile
 if [ ! -f "${HOME}"/.bashrc ]; then
 	ln -s "${HOME}"/.bash_profile "${HOME}"/.bashrc
 fi
+
+###
+# git
+###
+echo -n "Enter your git name: "
+read NAME
+echo -n "Enter you git email: "
+read EMAIL
+echo -e "[user]\n\tname = ${NAME}\n\temail = ${EMAIL}" > "${HOME}"/.gitconfig
+cat git/gitconfig >> "${HOME}"/.gitconfig
+cp git/githelpers "${HOME}"/.githelpers
 
 ###
 # vim
