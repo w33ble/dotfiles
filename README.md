@@ -10,6 +10,8 @@ Installation
 
 - run ./install.sh
 
+- follow any prompts or instructions
+
 Credits
 ---
 
