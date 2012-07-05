@@ -28,5 +28,7 @@
     ra = !git r --all
     l = "!source ~/.githelpers && pretty_git_log"
     la = !git l --all
+
+	todo = grep --heading --break --ignore-case -e ' FIX: *' -e ' TODO: *'
 [merge]
     tool = vimdiff
