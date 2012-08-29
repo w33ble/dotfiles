@@ -2,14 +2,14 @@
 
 #configure vim bundles
 VIM_BUNDLES=(
-	'https://github.com/vim-scripts/phpfolding.vim.git'
-	'https://github.com/msanders/snipmate.vim.git'
-	'https://github.com/scrooloose/syntastic.git'
-	'https://github.com/kchmck/vim-coffee-script.git'
-	'https://github.com/altercation/vim-colors-solarized.git'
-	'https://github.com/digitaltoad/vim-jade.git'
-	'https://github.com/wavded/vim-stylus.git'
-	'https://github.com/tpope/vim-surround.git'
+	'git://github.com/vim-scripts/phpfolding.vim.git'
+	'git://github.com/msanders/snipmate.vim.git'
+	'git://github.com/scrooloose/syntastic.git'
+	'git://github.com/kchmck/vim-coffee-script.git'
+	'git://github.com/altercation/vim-colors-solarized.git'
+	'git://github.com/digitaltoad/vim-jade.git'
+	'git://github.com/wavded/vim-stylus.git'
+	'git://github.com/tpope/vim-surround.git'
 	)
 
 #check for git
@@ -24,7 +24,7 @@ ROOT=`pwd`
 # bash
 ###
 #clone repo
-$GIT clone https://github.com/Knewton/bash_magic.git bash/bash_magic
+$GIT clone git://github.com/Knewton/bash_magic.git bash/bash_magic
 
 #install select bash magic scripts
 cd "bash/bash_magic"
