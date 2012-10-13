@@ -1,0 +1,5 @@
+alias sa='svn add'
+alias sd='svn diff -x -w'
+alias ss='svn status'
+alias sr='svn revert'
+alias sc='svn commit'
