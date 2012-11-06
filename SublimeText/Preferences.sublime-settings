@@ -1,0 +1,38 @@
+{
+	"bold_folder_labels": true,
+	"csslint_options":
+	{
+		"empty-rules": true,
+		"ids": false
+	},
+	"file_exclude_patterns":
+	[
+		".DS_Store",
+		".*.swp",
+		"dump.rdb"
+	],
+	"folder_exclude_patterns":
+	[
+		".git",
+		".svn",
+		".sass-cache",
+		"coverage",
+		"log",
+		"tmp"
+	],
+	"font_face": "Menlo",
+	"font_size": 12.0,
+	"highlight_modified_tabs": true,
+	"ignored_packages":
+	[
+		"Vintage"
+	],
+	"open_files_in_new_window": false,
+	"shift_tab_unindent": true,
+	"tab_size": 4,
+	"translate_tabs_to_spaces": true,
+	"draw_white_space" : "all",
+	"trim_trailing_white_space_on_save": true,
+	"word_wrap": true,
+	"detect_slow_plugins": false
+}

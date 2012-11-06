@@ -1,0 +1,25 @@
+{
+    // Turn the debug output on/off
+    "show_debug": false,
+
+    // Show the errors in the quick panel so you can then goto line
+    "phpcs_show_quick_panel": false,
+
+    // PHP-CS-Fixer settings
+
+    // Absolute path to where you have the php-cs-fixer installed
+    "php_cs_fixer_executable_path": "/path/to/php-cs-fixer.phar",
+
+    // Additional arguments you can specify into the application
+    //
+    // Example:
+    // {
+    //     "--level": "all"
+    // }
+    "php_cs_fixer_additional_args": {
+        "--level": "all"
+    },
+
+    // Are we going to run php -l over the file?
+    "phpcs_linter_run": false
+}
