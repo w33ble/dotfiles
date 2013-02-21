@@ -4,8 +4,7 @@
 #--all
 --type-set=coffeescript=.coffee
 --type-set=jade=.jade
---type-set=stylus=.stylus
+--type-set=stylus=.styl
 --type-set=less=.less
---type-set=sass=.sass
---type-set=scss=.scss
+--type-set=sass=.sass,.scss
 --type-set=handlebars=.hb
