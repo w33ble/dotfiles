@@ -48,6 +48,15 @@ if [ ! -f "${HOME}"/.bashrc ]; then
 fi
 
 ###
+# dotfiles
+###
+cd dotfiles
+for i in *; do
+	cp "${i}" "${HOME}/.${i}"
+done
+cd "${ROOT}"
+
+###
 # git
 ###
 echo -n "Enter your git name: "
