@@ -1,4 +1,11 @@
-#--all
---ignore-case
+--smart-case
 --with-filename
+--ignore-dir=node_modules
+#--all
 --type-set=coffeescript=.coffee
+--type-set=jade=.jade
+--type-set=stylus=.stylus
+--type-set=less=.less
+--type-set=sass=.sass
+--type-set=scss=.scss
+--type-set=handlebars=.hb
