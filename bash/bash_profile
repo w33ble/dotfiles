@@ -11,9 +11,10 @@ CYAN="\[\033[0;36m\]"
 LIGHT_GRAY="\[\033[0;37m\]"
 
 function parse_git_branch {
-	git rev-parse --git-dir > /dev/null 2>&1
+    git rev-parse --git-dir > /dev/null 2>&1
     if [ $? -eq 0 ]; then
         git_status="$(git status 2> /dev/null)"
+        git_stash="$(git stash list 2> /dev/null)"
         branch_pattern="^# On branch ([^${IFS}]*)"
         detached_branch_pattern="# Not currently on any branch"
         remote_pattern="# Your branch is (.*) of"
@@ -21,10 +22,14 @@ function parse_git_branch {
         untracked_pattern="# Untracked files:"
         new_pattern="new file:"
         not_staged_pattern="Changes not staged for commit"
-         
+
         #files not staged for commit
         if [[ ${git_status}} =~ ${not_staged_pattern} ]]; then
             state="✔"
+        fi
+        #files stashes
+        if [[ !${#git_stash} -eq 0 ]]; then
+            state="${state}☉"
         fi
         # add an else if or two here if you want to get more specific
         # show if we're ahead or behind HEAD
@@ -33,8 +38,8 @@ function parse_git_branch {
                 remote="↑"
             else
                 remote="↓"
-            fi 
-        fi 
+            fi
+        fi
         #new files
         if [[ ${git_status} =~ ${new_pattern} ]]; then
             remote="+"
@@ -48,7 +53,7 @@ function parse_git_branch {
             remote="↕"
         fi
         #branch name
-		if [[ ${git_status} =~ ${branch_pattern} ]]; then
+        if [[ ${git_status} =~ ${branch_pattern} ]]; then
             branch=${BASH_REMATCH[1]}
         #detached branch
         elif [[ ${git_status} =~ ${detached_branch_pattern} ]]; then
@@ -61,7 +66,7 @@ function parse_git_branch {
 }
 
 if [ -f `brew --prefix`/etc/bash_completion ]; then
-	. `brew --prefix`/etc/bash_completion
+    . `brew --prefix`/etc/bash_completion
 fi
 
 export TERM="xterm-color"
