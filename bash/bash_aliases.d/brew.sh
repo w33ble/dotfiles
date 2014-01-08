@@ -1,0 +1,1 @@
+alias bc='brew cask'

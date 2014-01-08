@@ -36,6 +36,7 @@ cp etc.sh "${HOME}/.bash_completion.d"
 cd "../bash_functions.d"
 cp completion.sh extract.sh lsbytes.sh lsnew.sh vim.sh "${HOME}/.bash_functions.d"
 cd "${ROOT}"
+
 #install custom bash scripts
 cp "bash/bash_aliases.d/"*.sh "${HOME}/.bash_aliases.d"
 #cp "bash/bash_completion.d/"*.sh "${HOME}/.bash_completion.d"
