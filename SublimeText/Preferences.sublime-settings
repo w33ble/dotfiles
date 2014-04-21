@@ -34,5 +34,6 @@
 	"draw_white_space" : "all",
 	"trim_trailing_white_space_on_save": true,
 	"word_wrap": true,
-	"detect_slow_plugins": false
+	"detect_slow_plugins": false,
+	"scroll_past_end": true
 }
