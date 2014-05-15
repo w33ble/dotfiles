@@ -32,5 +32,8 @@
     todo = grep --heading --break --ignore-case -e ' FIX: *' -e ' TODO: *'
 [merge]
     tool = vimdiff
+    ff = false
 [push]
     default = current
+[branch]
+    autosetuprebase = always
