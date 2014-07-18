@@ -40,3 +40,17 @@ pretty_git_log() {
         less -FXRS
 }
 
+sync_to_remote() {
+    REMOTE=$1
+    : ${REMOTE:="upstream"}
+    BRANCH=`git rev-parse --abbrev-ref HEAD`
+    git fetch upstream
+    git merge --ff-only ${REMOTE}/${BRANCH};
+}
+
+get_pr() {
+    REMOTE=$2
+    : ${REMOTE:="upstream"}
+    git fetch ${REMOTE} pull/${1}/head:pr/${1}
+    git checkout pr/${1}
+}

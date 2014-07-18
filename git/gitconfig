@@ -28,8 +28,10 @@
     ra = !git r --all
     l = "!source ~/.githelpers && pretty_git_log"
     la = !git l --all
+    sync = "!source ~/.githelpers && sync_to_remote"
 
     todo = grep --heading --break --ignore-case -e ' FIX: *' -e ' TODO: *'
+    pr = "!source ~/.githelpers && get_pr"
 [merge]
     tool = vimdiff
     ff = false
