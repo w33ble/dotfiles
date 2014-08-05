@@ -44,8 +44,8 @@ sync_to_remote() {
     REMOTE=$1
     : ${REMOTE:="upstream"}
     BRANCH=`git rev-parse --abbrev-ref HEAD`
-    git fetch upstream
-    git merge --ff-only ${REMOTE}/${BRANCH};
+    echo "Synching with ${REMOTE}"
+    git fetch ${REMOTE} && git rebase ${REMOTE}/${BRANCH};
 }
 
 get_pr() {
