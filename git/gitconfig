@@ -3,6 +3,7 @@
     ui = auto
 [alias]
     st = status
+    bi = bisect
     ci = commit
     co = checkout
     di = diff
@@ -32,9 +33,10 @@
 
     todo = grep --heading --break --ignore-case -e ' FIX: *' -e ' TODO: *'
     pr = "!source ~/.githelpers && get_pr"
+    prd = "!source ~/.githelpers && del_pr"
 [merge]
     tool = vimdiff
-    ff = false
+    ff = true
 [push]
     default = current
 [branch]

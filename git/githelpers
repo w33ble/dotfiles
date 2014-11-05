@@ -54,3 +54,9 @@ get_pr() {
     git fetch ${REMOTE} pull/${1}/head:pr/${1}
     git checkout pr/${1}
 }
+
+del_pr() {
+    BRANCH=`git rev-parse --abbrev-ref HEAD`
+    git checkout - && git branch -D ${BRANCH}
+}
+
