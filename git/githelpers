@@ -57,6 +57,10 @@ get_pr() {
 
 del_pr() {
     BRANCH=`git rev-parse --abbrev-ref HEAD`
+    if [[ ! ${BRANCH} =~ ^pr\/ ]]; then
+        echo "Not a PR branch, aborting!"
+        exit 1
+    fi
     git checkout - && git branch -D ${BRANCH}
 }
 
