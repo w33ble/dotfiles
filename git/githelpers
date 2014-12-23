@@ -60,3 +60,9 @@ del_pr() {
     git checkout - && git branch -D ${BRANCH}
 }
 
+clean_branches() {
+        BRANCHES=`git branch | grep -v \*`
+        for i in ${BRANCHES}; do
+                git branch -d $i
+        done
+}

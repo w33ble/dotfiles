@@ -34,6 +34,7 @@
     todo = grep --heading --break --ignore-case -e ' FIX: *' -e ' TODO: *'
     pr = "!source ~/.githelpers && get_pr"
     prd = "!source ~/.githelpers && del_pr"
+    brc = "!source ~/.githelpers && clean_branches"
 [merge]
     tool = vimdiff
     ff = true
