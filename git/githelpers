@@ -18,6 +18,7 @@ RELATIVE_TIME="%Cgreen(%ar)%Creset"
 AUTHOR="%C(bold blue)<%an>%Creset"
 REFS="%C(red)%d%Creset"
 SUBJECT="%s"
+DEFAULT_REMOTE="upstream"
 
 FORMAT="$HASH}$RELATIVE_TIME}$AUTHOR}$REFS $SUBJECT"
 
@@ -42,7 +43,7 @@ pretty_git_log() {
 
 sync_to_remote() {
     REMOTE=$1
-    : ${REMOTE:="upstream"}
+    : ${REMOTE:=$DEFAULT_REMOTE}
     BRANCH=`git rev-parse --abbrev-ref HEAD`
     echo "Synching with ${REMOTE}"
     git fetch ${REMOTE} && git rebase ${REMOTE}/${BRANCH};
