@@ -19,6 +19,7 @@ AUTHOR="%C(bold blue)<%an>%Creset"
 REFS="%C(red)%d%Creset"
 SUBJECT="%s"
 DEFAULT_REMOTE="upstream"
+ROOT_BRANCH="master"
 
 FORMAT="$HASH}$RELATIVE_TIME}$AUTHOR}$REFS $SUBJECT"
 
@@ -47,6 +48,22 @@ sync_to_remote() {
     BRANCH=`git rev-parse --abbrev-ref HEAD`
     echo "Synching with ${REMOTE}"
     git fetch ${REMOTE} && git rebase ${REMOTE}/${BRANCH};
+}
+
+update_branch() {
+    BRANCH=$1
+    : ${BRANCH:=$ROOT_BRANCH}
+    REMOTE=$2
+    : ${REMOTE:=$DEFAULT_REMOTE}
+    echo Updating ${BRANCH} from ${REMOTE}
+    # check stash stack before and after
+    old_stash=$(git rev-parse -q --verify refs/stash)
+    git stash
+    new_stash=$(git rev-parse -q --verify refs/stash)
+    # checkout branch and sync to remote, then come back
+    git checkout ${BRANCH} && git sync ${REMOTE} && git checkout -
+    # if the stash added to the stack, pop it back off
+    [ "$old_stash" != "$new_stash" ] && git stash pop
 }
 
 get_pr() {
