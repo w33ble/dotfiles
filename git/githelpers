@@ -66,7 +66,7 @@ del_pr() {
 }
 
 clean_branches() {
-    BRANCHES=`git branch | grep -v \*`
+    BRANCHES=`git branch | grep -v 'master\|develop\|\*'`
     for i in ${BRANCHES}; do
         git branch -d $i
     done
