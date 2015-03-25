@@ -31,6 +31,8 @@
     la = !git l --all
     sync = "!source ~/.githelpers && sync_to_remote"
     bsync = "!source ~/.githelpers && update_branch"
+    bp = !git backport
+    backport = "!source ~/.githelpers && backport_pr"
 
     todo = grep --heading --break --ignore-case -e ' FIX: *' -e ' TODO: *'
     pr = "!source ~/.githelpers && get_pr"

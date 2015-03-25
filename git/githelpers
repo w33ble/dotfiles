@@ -88,3 +88,22 @@ clean_branches() {
         git branch -d $i
     done
 }
+
+backport_pr() {
+    PR=$1
+    BRANCH=$2
+    [ -z "$BRANCH" ] && BRANCH=`git rev-parse --abbrev-ref HEAD`
+    REMOTE=$3
+    : ${REMOTE:=$DEFAULT_REMOTE}
+    THISBRANCH=`git rev-parse --abbrev-ref HEAD`
+
+    if [ -z "$PR" ]; then
+        echo "Please specify a PR to backport"
+        exit 1
+    fi
+
+    echo Backporting ${PR} to ${BRANCH} from ${REMOTE}
+    git fetch ${REMOTE} pull/${1}/head:pr/${1}
+    git checkout ${BRANCH} && curl -s "https://github.com/elastic/kibana/pull/${PR}.patch" | git am
+    [ "$THISBRANCH" != "$BRANCH" ] && git checkout -
+}
