@@ -67,10 +67,18 @@ update_branch() {
 }
 
 get_pr() {
+    PR=$1
     REMOTE=$2
-    : ${REMOTE:="upstream"}
-    git fetch ${REMOTE} pull/${1}/head:pr/${1}
-    git checkout pr/${1}
+    : ${REMOTE:=$DEFAULT_REMOTE}
+
+    if [ -z "$PR" ]; then
+        echo "Please specify a PR to checkout"
+        exit 1
+    fi
+
+    echo Checking out PR ${PR} from ${REMOTE}
+    git fetch ${REMOTE} pull/${PR}/head:pr/${PR}
+    git checkout pr/${PR}
 }
 
 del_pr() {
