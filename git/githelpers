@@ -104,6 +104,7 @@ backport_pr() {
     REMOTE=$3
     : ${REMOTE:=$DEFAULT_REMOTE}
     THISBRANCH=`git rev-parse --abbrev-ref HEAD`
+    URL="https://patch-diff.githubusercontent.com/raw/elastic/kibana/pull/${PR}.patch"
 
     if [ -z "$PR" ]; then
         echo "Please specify a PR to backport"
@@ -111,7 +112,7 @@ backport_pr() {
     fi
 
     echo Backporting ${PR} to ${BRANCH} from ${REMOTE}
-    git checkout ${BRANCH} && git pull ${REMOTE} ${BRANCH} && curl -s "https://github.com/elastic/kibana/pull/${PR}.patch" | git am
+    git checkout ${BRANCH} && git pull ${REMOTE} ${BRANCH} && curl -L -s "$URL" | git am
 
     # if the backport couldn't be cleanly applied, tell the user and exit
     if [ $? -ne 0 ]; then
