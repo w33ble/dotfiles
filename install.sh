@@ -38,7 +38,7 @@ cd "${ROOT}/bash/bash_magic/bash_functions.d";
 for i in completion extract lsbytes lsnew vim; do cp "${i}.sh" "${HOME}/.bash_functions.d"; done
 
 # install custom bash scripts
-cp "${ROOT}/bash/bash_aliases.d/"*.sh "${HOME}/.bash_aliases.d"
+# cp "${ROOT}/bash/bash_aliases.d/"*.sh "${HOME}/.bash_aliases.d"
 # cp "${ROOT}/bash/bash_completion.d/"*.sh "${HOME}/.bash_completion.d"
 # cp "${ROOT}/bash/bash_functions.d/"*.sh "${HOME}/.bash_functions.d"
 
