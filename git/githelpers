@@ -124,3 +124,11 @@ backport_pr() {
     # switch back if we didn't start in the target branch
     [ "$THISBRANCH" != "$BRANCH" ] && git checkout -
 }
+
+track_remote() {
+    REMOTE=$1
+    : ${REMOTE:="origin"}
+    BRANCH=$2
+    [ -z "$BRANCH" ] && BRANCH=`git rev-parse --abbrev-ref HEAD`
+    git branch --set-upstream-to=${REMOTE}/${BRANCH} ${BRANCH}
+}

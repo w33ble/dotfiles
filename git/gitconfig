@@ -33,15 +33,18 @@
     bsync = "!source ~/.githelpers && update_branch"
     bp = !git backport
     backport = "!source ~/.githelpers && backport_pr"
+    track = "!source ~/.githelpers && track_remote"
 
     todo = grep --heading --break --ignore-case -e ' FIX: *' -e ' TODO: *'
     pr = "!source ~/.githelpers && get_pr"
     prd = "!source ~/.githelpers && del_pr"
     brc = "!source ~/.githelpers && clean_branches"
+    lbr = for-each-ref --sort='-committerdate:iso8601' --format=' %(committerdate:iso8601)%09%(refname)' refs/heads
 [merge]
     tool = vimdiff
     ff = true
 [push]
     default = current
+    followTags = true
 [branch]
     autosetuprebase = always
