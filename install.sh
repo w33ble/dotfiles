@@ -31,11 +31,13 @@ fi
 mkdir -p "${HOME}/bin" "${HOME}/.bash_aliases.d" "${HOME}/.bash_completion.d" "${HOME}/.bash_functions.d"
 
 cd "${ROOT}/bash/bash_magic/bash_aliases.d";
-for i in color refresh git less dev sublime docker misc brew; do cp "${i}.sh" "${HOME}/.bash_aliases.d"; done
+for i in color refresh git less dev sublime docker misc; do cp "${i}.sh" "${HOME}/.bash_aliases.d"; done
 cd "${ROOT}/bash/bash_magic/bash_completion.d";
 for i in etc; do cp "${i}.sh" "${HOME}/.bash_completion.d"; done
 cd "${ROOT}/bash/bash_magic/bash_functions.d";
 for i in completion extract lsbytes lsnew vim; do cp "${i}.sh" "${HOME}/.bash_functions.d"; done
+# mac only aliases
+for i in brew top; do cp "${i}.sh" "${HOME}/.bash_aliases.d"; done
 
 # install custom bash scripts
 # cp "${ROOT}/bash/bash_aliases.d/"*.sh "${HOME}/.bash_aliases.d"
