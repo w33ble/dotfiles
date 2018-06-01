@@ -31,7 +31,7 @@ fi
 mkdir -p "${HOME}/bin" "${HOME}/.bash_aliases.d" "${HOME}/.bash_completion.d" "${HOME}/.bash_functions.d"
 
 cd "${ROOT}/bash/bash_magic/bash_aliases.d";
-for i in color refresh git less dev sublime top; do cp "${i}.sh" "${HOME}/.bash_aliases.d"; done
+for i in color refresh git less dev sublime; do cp "${i}.sh" "${HOME}/.bash_aliases.d"; done
 cd "${ROOT}/bash/bash_magic/bash_completion.d";
 for i in etc; do cp "${i}.sh" "${HOME}/.bash_completion.d"; done
 cd "${ROOT}/bash/bash_magic/bash_functions.d";
