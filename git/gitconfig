@@ -6,6 +6,7 @@
     bi = bisect
     ci = commit
     co = checkout
+    cp = cherry-pick
     di = diff
     dc = diff --cached
     amend = commit --amend
@@ -48,3 +49,5 @@
     followTags = true
 [branch]
     autosetuprebase = always
+[rebase]
+    autosquash = true
