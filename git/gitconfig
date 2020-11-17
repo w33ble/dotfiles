@@ -6,6 +6,7 @@
     bi = bisect
     ci = commit
     co = checkout
+    fu = commit --fixup
     cp = cherry-pick
     di = diff
     dc = diff --cached
@@ -25,9 +26,10 @@
 
     head = !git l -1
     h = !git head
-    hp = "!source ~/.githelpers && show_git_head"
+    hs = !git head --show-signature
     r = !git l -30
     ra = !git r --all
+    rs = !git log --oneline --show-signature
     l = "!source ~/.githelpers && pretty_git_log"
     la = !git l --all
     sync = "!source ~/.githelpers && sync_to_remote"
@@ -35,6 +37,7 @@
     bp = !git backport
     backport = "!source ~/.githelpers && backport_pr"
     track = "!source ~/.githelpers && track_remote"
+    sign = "!git commit -S --amend --no-edit"
 
     todo = grep --heading --break --ignore-case -e ' FIX: *' -e ' TODO: *'
     pr = "!source ~/.githelpers && get_pr"
