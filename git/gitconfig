@@ -41,8 +41,8 @@
 
     todo = grep --heading --break --ignore-case -e ' FIX: *' -e ' TODO: *'
     pr = "!source ~/.githelpers && get_pr"
-    prd = "!source ~/.githelpers && del_pr"
-    brc = "!source ~/.githelpers && clean_branches"
+    prx = "!source ~/.githelpers && del_pr"
+    brx = "!source ~/.githelpers && clean_branches"
     lbr = for-each-ref --sort='-committerdate:iso8601' --format=' %(committerdate:iso8601)%09%(refname)' refs/heads
 [merge]
     tool = vimdiff
