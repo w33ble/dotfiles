@@ -20,16 +20,13 @@ REFS="%C(red)%d%Creset"
 SUBJECT="%s"
 DEFAULT_REMOTE="upstream"
 ROOT_BRANCH="master"
+MAIN_BRANCH="main"
+DEVELOP_BRANCH="development"
 
 FORMAT="$HASH}$RELATIVE_TIME}$AUTHOR}$REFS $SUBJECT"
 
-show_git_head() {
-    pretty_git_log -1
-    git show -p --pretty="tformat:"
-}
-
 pretty_git_log() {
-    git log --graph --pretty="tformat:${FORMAT}" $* |
+    git log --graph --pretty="tformat:${FORMAT}" "$@" |
         # Replace (2 years ago) with (2 years)
         #sed -Ee 's/(^[^<]*) ago)/\1)/' |
         sed -e 's/ ago//' |
@@ -44,17 +41,17 @@ pretty_git_log() {
 
 sync_to_remote() {
     REMOTE=$1
-    : ${REMOTE:=$DEFAULT_REMOTE}
-    BRANCH=`git rev-parse --abbrev-ref HEAD`
-    echo "Synching with ${REMOTE}"
-    git fetch ${REMOTE} && git rebase ${REMOTE}/${BRANCH};
+    : "${REMOTE:=$DEFAULT_REMOTE}"
+    BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    echo "Synching with ${REMOTE}/${BRANCH}"
+    git fetch "${REMOTE}" && git rebase "${REMOTE}/${BRANCH}";
 }
 
 update_branch() {
     BRANCH=$1
-    : ${BRANCH:=$ROOT_BRANCH}
+    : "${BRANCH:=$ROOT_BRANCH}"
     REMOTE=$2
-    : ${REMOTE:=$DEFAULT_REMOTE}
+    : "${REMOTE:=$DEFAULT_REMOTE}"
     echo Updating ${BRANCH} from ${REMOTE}
     # check stash stack before and after
     old_stash=$(git rev-parse -q --verify refs/stash)
@@ -69,41 +66,41 @@ update_branch() {
 get_pr() {
     PR=$1
     REMOTE=$2
-    : ${REMOTE:=$DEFAULT_REMOTE}
+    : "${REMOTE:=$DEFAULT_REMOTE}"
 
     if [ -z "$PR" ]; then
         echo "Please specify a PR to checkout"
         exit 1
     fi
 
-    echo Checking out PR ${PR} from ${REMOTE}
-    git fetch ${REMOTE} pull/${PR}/head:pr/${PR}
-    git checkout pr/${PR}
+    echo Checking out PR "${PR}" from ${REMOTE}
+    git fetch ${REMOTE} "pull/${PR}/head:pr/${PR}"
+    git checkout "pr/${PR}"
 }
 
 del_pr() {
-    BRANCH=`git rev-parse --abbrev-ref HEAD`
+    BRANCH=$(git rev-parse --abbrev-ref HEAD)
     if [[ ! ${BRANCH} =~ ^pr\/ ]]; then
         echo "Not a PR branch, aborting!"
         exit 1
     fi
-    git checkout - && git branch -D ${BRANCH}
+    git checkout - && git branch -D "${BRANCH}"
 }
 
 clean_branches() {
-    BRANCHES=`git branch | grep -v 'master\|develop\|\*'`
+    BRANCHES=$(git branch | grep -v "${ROOT_BRANCH}\|${MAIN_BRANCH}\|${DEVELOP_BRANCH}\|\*")
     for i in ${BRANCHES}; do
-        git branch -d $i
+        git branch -d "$i"
     done
 }
 
 backport_pr() {
     PR=$1
     BRANCH=$2
-    [ -z "$BRANCH" ] && BRANCH=`git rev-parse --abbrev-ref HEAD`
+    [ -z "$BRANCH" ] && BRANCH=$(git rev-parse --abbrev-ref HEAD)
     REMOTE=$3
-    : ${REMOTE:=$DEFAULT_REMOTE}
-    THISBRANCH=`git rev-parse --abbrev-ref HEAD`
+    : "${REMOTE:=$DEFAULT_REMOTE}"
+    THISBRANCH=$(git rev-parse --abbrev-ref HEAD)
     URL="https://patch-diff.githubusercontent.com/raw/elastic/kibana/pull/${PR}.patch"
 
     if [ -z "$PR" ]; then
@@ -111,11 +108,12 @@ backport_pr() {
         exit 1
     fi
 
-    echo Backporting ${PR} to ${BRANCH} from ${REMOTE}
-    git checkout ${BRANCH} && git pull ${REMOTE} ${BRANCH} && curl -L -s "$URL" | git am
+    echo "Backporting ${PR} to ${BRANCH} from ${REMOTE}"
+
 
     # if the backport couldn't be cleanly applied, tell the user and exit
-    if [ $? -ne 0 ]; then
+    if ! git checkout "${BRANCH}" && git pull ${REMOTE} "${BRANCH}" && curl -L -s "$URL" | git am
+    then
         echo "FAILED - Backport could not be cleanly applied!"
         echo "FAILED - Fix by hand or run 'git am --abort'"
         exit 2
@@ -127,8 +125,8 @@ backport_pr() {
 
 track_remote() {
     REMOTE=$1
-    : ${REMOTE:="origin"}
+    : "${REMOTE:="origin"}"
     BRANCH=$2
-    [ -z "$BRANCH" ] && BRANCH=`git rev-parse --abbrev-ref HEAD`
-    git branch --set-upstream-to=${REMOTE}/${BRANCH} ${BRANCH}
+    [ -z "$BRANCH" ] && BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    git branch --set-upstream-to="${REMOTE}/${BRANCH}" "${BRANCH}"
 }
