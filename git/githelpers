@@ -58,7 +58,7 @@ update_branch() {
     git stash
     new_stash=$(git rev-parse -q --verify refs/stash)
     # checkout branch and sync to remote, then come back
-    git checkout ${BRANCH} && git sync ${REMOTE} && git checkout -
+    git checkout ${BRANCH} && git sync ${REMOTE} && git checkout - && git rebase ${BRANCH}
     # if the stash added to the stack, pop it back off
     [ "$old_stash" != "$new_stash" ] && git stash pop
 }
