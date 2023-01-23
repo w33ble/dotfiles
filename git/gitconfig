@@ -20,7 +20,8 @@
     gnc = goodness --cached
     fa = fetch --all
     pom = push origin master
-    b = branch
+    b = "!git for-each-ref --sort=-committerdate refs/heads --format='%(authordate:short) %(color:red)%(objectname:short) %(color:yellow)%(refname:short)%(color:reset) (%(color:green)%(committerdate:relative)%(color:reset))'"
+    ll = log --pretty='%C(yellow)%h %C(cyan)%cd %Cblue%aN%C(auto)%d %Creset%s' --graph --date=relative --topo-order --decorate
     ds = diff --stat=160,120
     dh1 = diff HEAD~1
 
