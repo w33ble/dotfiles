@@ -18,12 +18,18 @@ RELATIVE_TIME="%Cgreen(%ar)%Creset"
 AUTHOR="%C(bold blue)<%an>%Creset"
 REFS="%C(red)%d%Creset"
 SUBJECT="%s"
-DEFAULT_REMOTE="upstream"
+DEFAULT_REMOTE="origin"
 ROOT_BRANCH="master"
 MAIN_BRANCH="main"
 DEVELOP_BRANCH="development"
 
 FORMAT="$HASH}$RELATIVE_TIME}$AUTHOR}$REFS $SUBJECT"
+
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+YELLOW="\033[0;33m"
+CYAN="\033[0;36m"
+CRESET="\033[0m"
 
 pretty_git_log() {
     git log --graph --pretty="tformat:${FORMAT}" "$@" |
@@ -40,50 +46,81 @@ pretty_git_log() {
 }
 
 sync_to_remote() {
-    REMOTE=$1
-    : "${REMOTE:=$DEFAULT_REMOTE}"
+    REMOTE="${1:-${DEFAULT_REMOTE}}"
     BRANCH=$(git rev-parse --abbrev-ref HEAD)
-    echo "Synching with ${REMOTE}/${BRANCH}"
+
+    echo "Synching with ${YELLOW}${REMOTE}/${BRANCH}${CRESET}"
     git fetch "${REMOTE}" && git rebase "${REMOTE}/${BRANCH}";
 }
 
 update_branch() {
-    BRANCH=$1
-    : "${BRANCH:=$ROOT_BRANCH}"
-    REMOTE=$2
-    : "${REMOTE:=$DEFAULT_REMOTE}"
-    echo Updating ${BRANCH} from ${REMOTE}
-    # check stash stack before and after
-    old_stash=$(git rev-parse -q --verify refs/stash)
-    git stash
-    new_stash=$(git rev-parse -q --verify refs/stash)
-    # checkout branch and sync to remote, then come back
-    git checkout ${BRANCH} && git sync ${REMOTE} && git checkout - && git rebase ${BRANCH}
-    # if the stash added to the stack, pop it back off
-    [ "$old_stash" != "$new_stash" ] && git stash pop
+    BRANCH="${1:-${MAIN_BRANCH}}"
+    REMOTE="${2:-${DEFAULT_REMOTE}}"
+
+    echo "Fetching ${YELLOW}${REMOTE}/${BRANCH}${CRESET} and rebasing with autostash"
+
+    # 1. Update the local ref for the target branch (worktree-safe)
+    git fetch "$REMOTE" "$BRANCH"
+
+    # 2. Rebase with integrated stash management
+    # --autostash: hides dirty files, rebases, then pops them back
+    if git rebase --autostash "$REMOTE/$BRANCH"; then
+        echo "${GREEN}Successfully updated and reapplied changes${CRESET}"
+        git status --short
+    else
+        echo "${RED}Rebase conflict detected!${CRESET}"
+        echo "1. Fix conflicts -> git rebase --continue"
+        echo "2. Or abort -> git rebase --abort"
+        echo "   If aborting, don't forget your stashed changes in the stash list"
+        return 1
+    fi
 }
 
 get_pr() {
     PR=$1
-    REMOTE=$2
-    : "${REMOTE:=$DEFAULT_REMOTE}"
+    REMOTE="${2:-${DEFAULT_REMOTE}}"
 
     if [ -z "$PR" ]; then
-        echo "Please specify a PR to checkout"
+        echo "${RED}Please specify a PR to checkout${CRESET}"
         exit 1
     fi
 
-    echo Checking out PR "${PR}" from ${REMOTE}
-    git fetch ${REMOTE} "pull/${PR}/head:pr/${PR}"
-    git checkout "pr/${PR}"
+    echo Checking out PR "${CYAN}${PR}${CRESET}" from "${YELLOW}${REMOTE}${CRESET}"
+    git fetch "${REMOTE}" "pull/${PR}/head:pr/${PR}"
+
+    # Optimized count using grep -c
+    WT_COUNT=$(git worktree list --porcelain | grep -c "^worktree")
+
+    if [ "$WT_COUNT" -gt 1 ]; then
+        WT_NAME="PR-$PR"
+        echo "Worktrees detected. ${CYAN}Creating ${WT_NAME}${CRESET}"
+        git worktree add "PR-$PR" "pr/${PR}"
+        return
+    fi
+
+    # Fallback to normal checkout if no worktrees or user opts out
+    git checkout "pr/$PR"
 }
 
 del_pr() {
     BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
     if [[ ! ${BRANCH} =~ ^pr\/ ]]; then
-        echo "Not a PR branch, aborting!"
+        echo "${RED}Not a PR branch, aborting!${CRESET}"
         exit 1
     fi
+
+    if [ "$(git worktree list --porcelain | grep -c "^worktree")" -gt 1 ]; then
+        WT_PATH=$(git rev-parse --show-toplevel)
+        # echo "Worktrees detected. ${CYAN}Removing ${WT_PATH}${CRESET}"
+        git worktree remove "$WT_PATH" --force && git branch -D "$BRANCH"
+
+        echo "PR branch ${CYAN}${BRANCH}${CRESET} deleted and worktree ${CYAN}$(basename "$WT_PATH")${CRESET} removed"
+        echo "** ${GREEN}'cd ..' to return to the main repo${CRESET} **"
+        return
+    fi
+
+    # Fallback to normal branch deletion if no worktrees or user opts out
     git checkout - && git branch -D "${BRANCH}"
 }
 
@@ -95,38 +132,121 @@ clean_branches() {
 }
 
 backport_pr() {
-    PR=$1
-    BRANCH=$2
-    [ -z "$BRANCH" ] && BRANCH=$(git rev-parse --abbrev-ref HEAD)
-    REMOTE=$3
-    : "${REMOTE:=$DEFAULT_REMOTE}"
-    THISBRANCH=$(git rev-parse --abbrev-ref HEAD)
-    URL="https://patch-diff.githubusercontent.com/raw/elastic/kibana/pull/${PR}.patch"
+    echo "THIS NEEDS WORK - DO NOT USE YET"
+    return 1
 
-    if [ -z "$PR" ]; then
-        echo "Please specify a PR to backport"
-        exit 1
-    fi
+    # PR=$1
+    # BRANCH=$2
+    # [ -z "$BRANCH" ] && BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    # REMOTE="${3:-${DEFAULT_REMOTE}}"
 
-    echo "Backporting ${PR} to ${BRANCH} from ${REMOTE}"
+    # THISBRANCH=$(git rev-parse --abbrev-ref HEAD)
+    # URL="https://patch-diff.githubusercontent.com/raw/elastic/kibana/pull/${PR}.patch"
+
+    # if [ -z "$PR" ]; then
+    #     echo "Please specify a PR to backport"
+    #     exit 1
+    # fi
+
+    # echo "Backporting ${CYAN}${PR}${CRESET} to ${YELLOW}${BRANCH}${CRESET} from ${YELLOW}${REMOTE}${CRESET}"
 
 
-    # if the backport couldn't be cleanly applied, tell the user and exit
-    if ! git checkout "${BRANCH}" && git pull ${REMOTE} "${BRANCH}" && curl -L -s "$URL" | git am
-    then
-        echo "FAILED - Backport could not be cleanly applied!"
-        echo "FAILED - Fix by hand or run 'git am --abort'"
-        exit 2
-    fi
+    # # if the backport couldn't be cleanly applied, tell the user and exit
+    # if ! git checkout "${BRANCH}" && git pull "${REMOTE}" "${BRANCH}" && curl -L -s "$URL" | git am
+    # then
+    #     echo "FAILED - Backport could not be cleanly applied!"
+    #     echo "FAILED - Fix by hand or run 'git am --abort'"
+    #     exit 2
+    # fi
 
-    # switch back if we didn't start in the target branch
-    [ "$THISBRANCH" != "$BRANCH" ] && git checkout -
+    # # switch back if we didn't start in the target branch
+    # [ "$THISBRANCH" != "$BRANCH" ] && git checkout -
 }
 
 track_remote() {
-    REMOTE=$1
-    : "${REMOTE:="origin"}"
+    REMOTE="${1:-${DEFAULT_REMOTE}}"
     BRANCH=$2
+
     [ -z "$BRANCH" ] && BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    echo "Setting ${CYAN}${BRANCH}${CRESET} to track ${YELLOW}${REMOTE}/${BRANCH}${CRESET}"
     git branch --set-upstream-to="${REMOTE}/${BRANCH}" "${BRANCH}"
+}
+
+SNAPSHOT_DIR="$HOME/.git-snapshots"
+
+create_snap() {
+    NAME=$1
+    if [ -z "$NAME" ]; then
+        echo "${RED}Error: Please specify a name for the snap.${CRESET}"
+        return 1
+    fi
+
+    mkdir -p "$SNAPSHOT_DIR"
+    FILE="$SNAPSHOT_DIR/${NAME}.patch"
+
+    if [ -f "$FILE" ]; then
+        echo "${RED}Error: Snap '$NAME' already exists.${CRESET}"
+        return 1
+    fi
+
+    git diff --cached > "$FILE" && git reset
+}
+
+apply_snap() {
+    NAME=$1
+    FILE="$SNAPSHOT_DIR/${NAME}.patch"
+
+    if [ ! -f "$FILE" ]; then
+        echo "${RED}Error: Snap '$NAME' not found.${CRESET}"
+        return 1
+    fi
+
+    echo "Applying snap ${CYAN}${NAME}${CRESET}"
+    git apply "$FILE"
+}
+
+list_snaps() {
+    echo "Snapshots in ${CYAN}$SNAPSHOT_DIR${CRESET}"
+    find "$SNAPSHOT_DIR" -maxdepth 1 -mindepth 1 -print0 | while IFS= read -r -d '' file; do
+        # $file is now safe to use, even with spaces or newlines
+        echo "  $(basename "$file" .patch)"
+    done
+
+}
+
+revert_snap() {
+    NAME=$1
+    FILE="$SNAPSHOT_DIR/${NAME}.patch"
+    if [ ! -f "$FILE" ]; then
+        echo "${RED}Error: Snap '$NAME' not found.${CRESET}"
+        return 1
+    fi
+    echo "Reverting snap ${CYAN}${NAME}${CRESET}"
+    git apply --reverse "$FILE"
+}
+
+remove_snap() {
+    NAME=$1
+    FILE="$SNAPSHOT_DIR/${NAME}.patch"
+    if [ ! -f "$FILE" ]; then
+        echo "${RED}Error: Snap '$NAME' not found.${CRESET}"
+        return 1
+    fi
+    echo "Remove snap ${CYAN}${NAME}${CRESET} ? (y/n)"
+    read -r a
+    if [[ "$a" == [yY]* ]]; then
+        rm "$FILE"
+    else
+        echo "-- Aborted"
+    fi
+}
+
+show_snap() {
+    NAME=$1
+    FILE="$SNAPSHOT_DIR/${NAME}.patch"
+    if [ ! -f "$FILE" ]; then
+        echo "${RED}Error: Snap '$NAME' not found.${CRESET}"
+        return 1
+    fi
+    cat "$FILE"
 }
